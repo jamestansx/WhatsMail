@@ -4,7 +4,14 @@ import openmessages
 import fetchMessages
 import sendEmail
 
-target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath = "", "", "", "", "",""
+target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath = (
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+)
 
 
 def presetup():

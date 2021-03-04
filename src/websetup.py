@@ -26,7 +26,6 @@ class WebWhatsApp:
         }
 
     def setupSelenium(self):
-        print(self.chromedataPath)
         path = self.driverPath
         self.chrome_option.add_argument("--disable-notifications")
         self.chrome_option.add_argument(f"user-data-dir={self.chromedataPath}")
@@ -60,13 +59,11 @@ class WebWhatsApp:
             sys.exit(0)
 
     def open_webdriver(self):
-        print(self.chromedataPath)
         self.setupSelenium()
         driver.get(self.URL)
         return WebWhatsApp.is_loaded()
 
 def open_whatsapp(downloadPath, webdriverPath, chromedataPath):
-    print(chromedataPath)
     webwhatsapp = WebWhatsApp(webdriverPath, downloadPath, chromedataPath)
     return webwhatsapp.open_webdriver()
 
