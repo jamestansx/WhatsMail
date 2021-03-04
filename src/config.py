@@ -75,11 +75,11 @@ def getSettings(pathToFile):
     downloadPath, webdriverPath, chromedataPath = None, None, None
     for key in path:
         if os.path.isfile(path[key]) is True:
-            if key in "downloadPath":
-                downloadPath = path[key]
             if key in "webdriverPath":
                 webdriverPath = path[key]
         if os.path.isdir(path[key]) is True:
+            if key in "downloadPath":
+                downloadPath = path[key]
             if key in "chromedataPath":
                 chromedataPath = path[key]
     return downloadPath, webdriverPath, chromedataPath
