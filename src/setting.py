@@ -16,6 +16,7 @@ class GetDirs:
         self.dirs["userData"] = dir.user_data_dir
         self.dirs["userCache"] = dir.user_cache_dir
         self.dirs["userLog"] = dir.user_log_dir
+        self.dirs["userConfig"] = dir.user_config_dir
         self.make_dir()
         return self.dirs
 
@@ -28,17 +29,33 @@ class GetDirs:
         return True
 
 
-class CreateKey:
+class target:
+    def __init__(self):
+        self.username = None
+        self.gmail = None
+
+    """
+    TODO
+    - Create functions that read the target's whatsapp username and email address (* return the values)
+    """
+
+    def newTarget(self):
+        self.username = input("Enter new WhatsApp contact: ")
+        self.gmail = input("Enter new recipient's Gmail contact: ")
+        return self.username, self.gmail
+
+
+class Key:
     userGmailAcc = ""
 
     def __init__(self):
         self.userPassword = ""
 
     def keyGen(self):
-        CreateKey.userGmailAcc = input("Enter your G-mail account: ")
+        Key.userGmailAcc = input("Enter your G-mail account: ")
         self.userPassword = input("Enter your G-mail password: ")
         try:
-            yagmail.register(CreateKey.userGmailAcc, self.userPassword)
+            yagmail.register(Key.userGmailAcc, self.userPassword)
             return True
         except Exception as e:
             error = f"Failed to register: {e}"
@@ -46,7 +63,7 @@ class CreateKey:
 
     def delKey():
         try:
-            keyring.delete_password("yagmail", CreateKey.userGmailAcc)
+            keyring.delete_password("yagmail", Key.userGmailAcc)
             return True
         except Exception as e:
             error = f"Failed to delete key: {e}"
@@ -55,7 +72,7 @@ class CreateKey:
     def change_password():
         new_password = input("Enter new password: ")
         try:
-            keyring.set_password("yagmail", CreateKey.userGmailAcc, new_password)
+            keyring.set_password("yagmail", Key.userGmailAcc, new_password)
             return True
         except KeyError as e:
             error = f"Failed to change password: {e}"
@@ -64,4 +81,4 @@ class CreateKey:
 
 def getDirs(appname, appauthor):
     get_dirs = GetDirs(appname, appauthor)
-    get_dirs.get_dirs()
+    return get_dirs.get_dirs()
