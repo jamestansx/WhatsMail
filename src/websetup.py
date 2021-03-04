@@ -15,19 +15,21 @@ driver = None
 
 
 class WebWhatsApp:
-    def __init__(self, driverPath, downloadPath):
+    def __init__(self, driverPath, downloadPath, chromedataPath):
         self.URL = "https://web.whatsapp.com/"  # WhatsApp URL
         self.driverPath = driverPath
         self.chrome_option = Options()  # saving and loading the profile configuration
+        self.chromedataPath = chromedataPath
         self.prefs = {
             "download.default_directory": f"{downloadPath}",
             "safebrowsing.enabled": "false",
         }
 
     def setupSelenium(self):
+        print(self.chromedataPath)
         path = self.driverPath
         self.chrome_option.add_argument("--disable-notifications")
-        self.chrome_option.add_argument(f"user-data-dir=D:/websession/")
+        self.chrome_option.add_argument(f"user-data-dir={self.chromedataPath}")
         #self.chrome_option.add_experimental_option("prefs", self.prefs)
         # self.chrome_option.add_argument("--headless")
         # Uncomment this after the program is done
@@ -58,12 +60,14 @@ class WebWhatsApp:
             sys.exit(0)
 
     def open_webdriver(self):
+        print(self.chromedataPath)
         self.setupSelenium()
         driver.get(self.URL)
         return WebWhatsApp.is_loaded()
 
-def open_whatsapp(downloadPath, webdriverPath):
-    webwhatsapp = WebWhatsApp(webdriverPath, downloadPath)
+def open_whatsapp(downloadPath, webdriverPath, chromedataPath):
+    print(chromedataPath)
+    webwhatsapp = WebWhatsApp(webdriverPath, downloadPath, chromedataPath)
     return webwhatsapp.open_webdriver()
 
 def close_webdriver():

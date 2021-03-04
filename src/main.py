@@ -4,17 +4,17 @@ import openmessages
 import fetchMessages
 import sendEmail
 
-target_username, gmail, download_path, webdriverPath, userGmail = "", "", "", "", ""
+target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath = "", "", "", "", "",""
 
 
 def presetup():
-    global target_username, gmail, download_path, webdriverPath, userGmail
+    global target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath
 
-    download_path, webdriverPath = config.isFirstRun()
+    download_path, webdriverPath, chromedataPath = config.isFirstRun()
 
     target_username, gmail, userGmail = config.isConfig()
 
-    return websetup.open_whatsapp(download_path, webdriverPath)
+    return websetup.open_whatsapp(download_path, webdriverPath, chromedataPath)
 
 
 def main():
