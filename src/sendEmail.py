@@ -1,15 +1,17 @@
 import yagmail
 import os
+from datetime import datetime
 
 class Email:
     def __init__(self, userGmail, target_username, targetGmail, messageList, downloadPath):
         self.gmail = userGmail
         self.target_username = target_username
-        self.subject = f"WhatsApp Notification From {target_username}"
+        self.subject = f"WhatsApp Notification From {target_username} "
         self.messageList = messageList
         self.targetGmail = targetGmail
         self.attach_list = []
         self.downloadPath = downloadPath
+        self.now = datetime.now()
 
     def initYagmail(self):
         try:
@@ -27,10 +29,12 @@ class Email:
 
     def send_email(self):
         yag = Email.initYagmail(self)
+        date = self.now.strftime("%d/%m/%Y %H:%M:%S")
+        subject_title = self.subject + date
         try:
             yag.send(
                 to = self.targetGmail,
-                subject = self.subject,
+                subject = subject_title,
                 contents = self.messageList,
                 attachments = self.attach_list
             )
