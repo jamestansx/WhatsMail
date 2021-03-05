@@ -1,4 +1,5 @@
 import os
+import logging
 
 import keyring
 import yagmail
@@ -25,7 +26,7 @@ class GetDirs:
             try:
                 os.makedirs(self.dirs[dir], exist_ok=True)
             except OSError:
-                raise OSError
+                logging.error("Could not create directory")
         return True
 
 
@@ -33,11 +34,6 @@ class target:
     def __init__(self):
         self.username = None
         self.gmail = None
-
-    """
-    TODO
-    - Create functions that read the target's whatsapp username and email address (* return the values)
-    """
 
     def newTarget(self):
         self.username = input("Enter new WhatsApp contact: ")
@@ -56,10 +52,11 @@ class Key:
         self.userPassword = input("Enter your G-mail password: ")
         try:
             yagmail.register(Key.userGmailAcc, self.userPassword)
+            logging.info(f"Successfully register {Key.userGmailAcc} key")
             return True
         except Exception as e:
             error = f"Failed to register: {e}"
-            raise error
+            logging.error(error)
 
     def delKey():
         try:
@@ -67,7 +64,7 @@ class Key:
             return True
         except Exception as e:
             error = f"Failed to delete key: {e}"
-            raise error
+            logging.error(error)
 
     def change_password():
         new_password = input("Enter new password: ")
@@ -76,14 +73,16 @@ class Key:
             return True
         except KeyError as e:
             error = f"Failed to change password: {e}"
-            raise error
+            logging.error(error)
 
 
 def getDirs(appname, appauthor):
     get_dirs = GetDirs(appname, appauthor)
+    logging.debug("directory(s) is created")
     return get_dirs.get_dirs()
 
 
 def remove_files(dirPath):
     for file in os.listdir(dirPath):
         os.remove(os.path.join(dirPath, file))
+    logging.info(f"all files in {dirPath} is deleted")

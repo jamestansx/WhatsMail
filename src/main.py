@@ -4,6 +4,7 @@ import openmessages
 import sendEmail
 import setting
 import websetup
+import log
 
 target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath, isFirstRun = (
     "",
@@ -18,9 +19,8 @@ target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath,
 
 def presetup():
     global target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath
-
+    log.loggerConfig()
     download_path, webdriverPath, chromedataPath, isFirstRun = config.isFirstRun()
-
     target_username, gmail, userGmail = config.isConfig()
     return websetup.open_whatsapp(download_path, webdriverPath, chromedataPath, isFirstRun)
 

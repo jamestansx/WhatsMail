@@ -1,5 +1,7 @@
 import yagmail
 import os
+import logging
+import log
 from datetime import datetime
 
 class Email:
@@ -12,20 +14,23 @@ class Email:
         self.attach_list = []
         self.downloadPath = downloadPath
         self.now = datetime.now()
+        logging.debug("__init__ is initiated")
 
     def initYagmail(self):
         try:
             yag = yagmail.SMTP(self.gmail)
+            logging.debug("Successfully initiated yagmail SMTP connection")
             return yag
         except Exception as e:
             error = f"Failed to initiate connection: {e}"
-            print(error)
+            logging.error(error)
 
     def get_attach_list(self):
         with os.scandir(self.downloadPath) as entries:
             for entry in entries:
                 if entry.is_file():
                     self.attach_list.append(os.path.join(self.downloadPath, entry.name))
+                    logging.debug(f"file {entry.name} is found")
 
     def send_email(self):
         yag = Email.initYagmail(self)
@@ -38,9 +43,27 @@ class Email:
                 contents = self.messageList,
                 attachments = self.attach_list
             )
-            print(f"Email is sent to {self.target_username}")
+            logging.info(f"Email is sent to {self.target_username}")
+            self.send_logfile(date, yag)
         except Exception as e:
-            print(f"Failed to send email to {self.target_username}: {e}")
+            logging.error(f"Failed to send email to {self.target_username}: {e}")
+
+    def send_logfile(self, date, yag):
+        LogPath = log.userLog_path
+        subjectTitle = f"Log File of WhatsMail at {date}"
+        try:
+            log.stopLogging()
+            yag.send(
+                to=self.gmail,
+                subject=subjectTitle,
+                contents="log file",
+                attachments=LogPath
+            )
+        except Exception as e:
+            try:
+                logging.critical(f"Failed to send log file: {e}")
+            except Exception:
+                pass
 
 def sendGmail(userGmail, target_username, targetGmail, messageList, downloadPath):
     email = Email(userGmail, target_username, targetGmail, messageList, downloadPath)

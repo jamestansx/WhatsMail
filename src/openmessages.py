@@ -1,5 +1,6 @@
 import sys
 import time
+import logging
 
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
@@ -20,9 +21,10 @@ def open_conversation(target_username):
             username_elem = websetup.driver.find_element_by_xpath(
                 f"//span[@title='{target_username}']"
             )  # find the target's chatbar
+            logging.info(f"Contact: {username_elem.text}is found")
             break
         except Exception as e:
-            print(e)
+            logging.warning(f"Contact: {target_username } is not found - {e}")
             continue
     if check_status(target_username) is True:
         return is_chat_loaded()
@@ -33,17 +35,15 @@ def check_status(target_username):
         try:
             username_class = username_elem.find_element_by_xpath(".//ancestor::div[@class='TbtXF']")
             unread_status = username_class.find_element_by_xpath(".//span[@class='_38M1B']")
-            print(f"unread_status: {unread_status.text}")
+            logging.debug(f"unread_status: {unread_status.text}")
             click_box(target_username)
             return True
         except (NoSuchElementException, TimeoutException) as e:
-            print("**No new messages**")
-            print(f"Details: {e}")
-            input("Press Any Key to continue")
+            logging.warning(f"No new message \nDetails: {e}")
             websetup.driver.close()
             sys.exit(0)
         except Exception as e:
-            print(e)
+            logging.error(e)
             pass
 
 
@@ -53,10 +53,10 @@ def click_box(target_username):
     while True:
         try:
             username_elem.click()
+            logging.debug("Chatbox is clicked")
             break
         except Exception as E:
-            print(f"Details: {E}")
-            print("Retrying...")
+            logging.warning(f"Chatbox is not clicked. Details: {E}")
             username_elem = websetup.driver.find_element_by_xpath(
                 f"//span[@title='{target_username}']"
             )
@@ -85,6 +85,8 @@ def is_chat_loaded():
                     )
                 )
             )
+            logging.debug("message is loaded")
             return True
-        except (TimeoutException, NoSuchElementException):
+        except (TimeoutException, NoSuchElementException) as e:
+            logging.warning(f"message is loaded but with {e}")
             return True

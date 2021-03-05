@@ -1,5 +1,5 @@
 import os
-
+import logging
 import setting
 import jsonfile
 
@@ -39,6 +39,7 @@ def setupSetting(pathToFile):
         "webdriverPath": webdriverPath,
         "chromedataPath": chromedataPath,
     }
+    logging.info("paths is entered")
     jsonfile.write_json(pathToFile, writeSettings(pathDict))
     return download_path, webdriverPath, chromedataPath, True
 
@@ -48,9 +49,11 @@ def getChomedataPath():
     if response.strip().lower() in {"y", "yes"}:
         userCachedProfile = os.path.join(dirs["userCache"], "websession")
         os.makedirs(userCachedProfile, exist_ok=True)
+        logging.info(f"Chrome profile is created at {userCachedProfile}")
         return userCachedProfile
     if response.strip().lower() in {"n", "no"}:
         chromedataPath = input("Please enter the path to the Chrome appdata: ")
+        logging.info(f"Chrome profile is created at {chromedataPath}")
         return chromedataPath
 
 
@@ -67,13 +70,15 @@ def getSettings(pathToFile):
     data = jsonfile.read_json(pathToFile)
     try:
         if data["isFirstRun"] is not False:
+            logging.warning("Setup is not yet been done with isFirstRun: " + data["isFirstRun"])
             return setupSetting(pathToFile)
         if data["keyStatus"] is False:
+            logging.warning("Key is not yet been created with keyStatus: " + data["keyStatus"])
             global userDict
             userDict = createKey()
             jsonfile.write_json(userConfig_json, writeConfig(None, userDict))
     except Exception as e:
-        raise e
+        logging.error(e)
     path = data["path"]
     downloadPath, webdriverPath, chromedataPath = None, None, None
     for key in path:
@@ -85,6 +90,7 @@ def getSettings(pathToFile):
                 downloadPath = path[key]
             if key in "chromedataPath":
                 chromedataPath = path[key]
+        logging.info("Path(s) are successfully extracted")
     return downloadPath, webdriverPath, chromedataPath, data["isFirstRun"]
 
 
@@ -97,11 +103,13 @@ def getConfig(pathToFile):
                 gmail = key["gmail"]
             for key in data["user"]:
                 userGmail = key["userGmail"]
+            logging.info("Profile(s) are successfully extracted")
         else:
+            logging.warning("Configuration is not yet been created")
             return setupConfig(pathToFile)
         return username, gmail, userGmail
     except Exception as e:
-        raise e
+        logging.error(e)
 
 
 def writeSettings(pathDict):

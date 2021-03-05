@@ -1,8 +1,12 @@
-from selenium.webdriver.support.ui import WebDriverWait
+import logging
+import log
 import time
-import websetup
-from watchdog.observers import Observer
+
+from selenium.webdriver.support.ui import WebDriverWait
 from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
+
+import websetup
 
 FileIsFounded = False
 
@@ -12,6 +16,7 @@ def fetchMessages(downloadPath):
     messages_elem_list = messages_class.find_elements_by_xpath(
         ".//div[contains(@class,'focusable-list-item')]"
     )
+    logging.debug(f"Message list: {messages_elem_list} is found")
     isElemUnread = False
     messageList = []
 
@@ -25,6 +30,7 @@ def fetchMessages(downloadPath):
                 messageList.append(message)
             except Exception:
                 try:
+                    logging.debug("Images/Pdfs is found, downloading...")
                     download(message, downloadPath)
                 except Exception as e:
                     print(e)
@@ -38,6 +44,7 @@ def getMessage(element):
     message = message_container.find_element_by_xpath(
         ".//span[contains(@class, '_3-8er selectable-text copyable-text')]"
     ).text
+    logging.debug("text message is appended to list")
     return message
 
 
@@ -54,12 +61,15 @@ def download(message, downloadPath):
 def download_Img(message, downloadPath):
     image_container = message.find_element_by_xpath('.//div[contains(@role,"button")]')
     image_container.click()
+    logging.debug("Image is clicked")
     try:
         img_download_button = websetup.driver.find_element_by_xpath(
             '//*[@id="app"]/div/span[3]/div/div/div[2]/div[1]/div[2]/div/div[4]/div/span'
         )
         img_download_button.click()
-    except Exception:
+        logging.debug("Image is downloaded")
+    except Exception as e:
+        logging.warning(f"Downloading image has encountered an error: {e}")
         pass
     finally:
         exit_img(downloadPath, img_download_button)
@@ -71,6 +81,7 @@ def exit_img(downloadPath, img_download_button):
             "//*[@id='app']/div/span[3]/div/div/div[2]/div[1]/div[2]/div/div[5]/div/span"
         )
         exit.click()
+        logging.debug("Exit image")
         WebDriverWait(websetup.driver, websetup.longdelay).until_not(lambda x: img_download_button)
         watch = OnMyWatch(downloadPath)
         watch.run()
@@ -81,12 +92,12 @@ def exit_img(downloadPath, img_download_button):
 def download_pdf(message, downloadPath):
     pdf = message.find_element_by_xpath('.//div[contains(@class,"MYzfD")]')
     pdf.click()
+    logging.debug("Pdf is downloaded")
     watch = OnMyWatch(downloadPath)
     watch.run()
 
 
 class OnMyWatch:
-    # Set the directory on watch
     def __init__(self, downloadPath):
         self.observer = Observer()
         self.watchDirectory = downloadPath
@@ -98,7 +109,7 @@ class OnMyWatch:
         while FileIsFounded is not True:
             time.sleep(2)
         self.observer.stop()
-        print("Observer Stopped")
+        logging.debug("Observer is stopped")
         self.observer.join()
 
 
@@ -109,7 +120,6 @@ class Handler(FileSystemEventHandler):
             return None
 
         elif event.event_type == "created":
-            # Event is created, you can process it now
             global FileIsFounded
-            print(f"{event.src_path}")
+            logging.info(f"File is deleting in {event.src_path}")
             FileIsFounded = True
