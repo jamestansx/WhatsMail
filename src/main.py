@@ -1,10 +1,12 @@
 import config
-import websetup
-import openmessages
 import fetchMessages
+import openmessages
 import sendEmail
+import setting
+import websetup
 
-target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath = (
+target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath, isFirstRun = (
+    "",
     "",
     "",
     "",
@@ -17,17 +19,17 @@ target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath 
 def presetup():
     global target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath
 
-    download_path, webdriverPath, chromedataPath = config.isFirstRun()
+    download_path, webdriverPath, chromedataPath, isFirstRun = config.isFirstRun()
 
     target_username, gmail, userGmail = config.isConfig()
-
-    return websetup.open_whatsapp(download_path, webdriverPath, chromedataPath)
+    return websetup.open_whatsapp(download_path, webdriverPath, chromedataPath, isFirstRun)
 
 
 def main():
     if openmessages.open_conversation(target_username) is True:
-        message_list = fetchMessages.fetchMessages()
+        message_list = fetchMessages.fetchMessages(download_path)
         sendEmail.sendGmail(userGmail, target_username, gmail, message_list, download_path)
+    setting.remove_files(download_path)
 
 
 if __name__ == "__main__":
