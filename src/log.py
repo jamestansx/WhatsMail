@@ -16,7 +16,7 @@ def loggerConfig():
         filemode="w",
         format="%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d %(message)s",
         encoding="utf-8",
-        level=logging.INFO,
+        level=logging.DEBUG,
         datefmt="%d-%b-%y %H:%M:%S",
         filename=userLog_path,
     )
