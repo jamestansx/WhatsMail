@@ -82,3 +82,8 @@ class Key:
 def getDirs(appname, appauthor):
     get_dirs = GetDirs(appname, appauthor)
     return get_dirs.get_dirs()
+
+
+def remove_files(dirPath):
+    for file in os.listdir(dirPath):
+        os.remove(os.path.join(dirPath, file))
