@@ -21,15 +21,18 @@ class WebWhatsApp:
         self.chrome_option = Options()  # saving and loading the profile configuration
         self.chromedataPath = chromedataPath
         self.prefs = {
-            "download.default_directory": f"{downloadPath}",
-            "safebrowsing.enabled": "false",
+            "download.default_directory": f"{downloadPath}\\",
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing_for_trusted_sources_enabled": False,
+            "safebrowsing.enabled": False
         }
 
     def setupSelenium(self):
         path = self.driverPath
         self.chrome_option.add_argument("--disable-notifications")
         self.chrome_option.add_argument(f"user-data-dir={self.chromedataPath}")
-        #self.chrome_option.add_experimental_option("prefs", self.prefs)
+        self.chrome_option.add_experimental_option("prefs", self.prefs)
         # self.chrome_option.add_argument("--headless")
         # Uncomment this after the program is done
         # ============================================
