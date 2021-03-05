@@ -40,17 +40,19 @@ def setupSetting(pathToFile):
         "chromedataPath": chromedataPath,
     }
     jsonfile.write_json(pathToFile, writeSettings(pathDict))
-    return download_path, webdriverPath, chromedataPath
+    return download_path, webdriverPath, chromedataPath, True
+
 
 def getChomedataPath():
     response = input("Chrome profile path: \nDefault path (y/n): ")
-    if response.strip().lower() in {'y', 'yes'}:
+    if response.strip().lower() in {"y", "yes"}:
         userCachedProfile = os.path.join(dirs["userCache"], "websession")
         os.makedirs(userCachedProfile, exist_ok=True)
         return userCachedProfile
-    if response.strip().lower() in {'n', 'no'}:
+    if response.strip().lower() in {"n", "no"}:
         chromedataPath = input("Please enter the path to the Chrome appdata: ")
         return chromedataPath
+
 
 def setupConfig(pathToFile):
     target = setting.target()
@@ -59,6 +61,7 @@ def setupConfig(pathToFile):
     userDict = createKey()
     jsonfile.write_json(pathToFile, writeConfig(targetDict, userDict))
     return username, gmail, userDict["userGmail"]
+
 
 def getSettings(pathToFile):
     data = jsonfile.read_json(pathToFile)
@@ -82,13 +85,13 @@ def getSettings(pathToFile):
                 downloadPath = path[key]
             if key in "chromedataPath":
                 chromedataPath = path[key]
-    return downloadPath, webdriverPath, chromedataPath
+    return downloadPath, webdriverPath, chromedataPath, data["isFirstRun"]
 
 
 def getConfig(pathToFile):
     data = jsonfile.read_json(pathToFile)
     try:
-        if  bool(data["target"])  and bool(data["user"]):
+        if bool(data["target"]) and bool(data["user"]):
             for key in data["target"]:
                 username = key["username"]
                 gmail = key["gmail"]
@@ -104,13 +107,13 @@ def getConfig(pathToFile):
 def writeSettings(pathDict):
 
     data = {}
-    data["isFirstRun"] = False
+    data["isFirstRun"] = True
     data["keyStatus"] = False
     data["path"] = pathDict
     return data
 
 
-def writeConfig(targetDict = None, userDict = None):
+def writeConfig(targetDict=None, userDict=None):
 
     data = {}
     data["user"] = []
