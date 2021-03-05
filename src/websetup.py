@@ -1,4 +1,5 @@
 import sys
+import os
 
 from selenium import webdriver
 from selenium.common.exceptions import *
@@ -6,6 +7,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+import jsonfile
+import setting
 
 shortdelay = 5
 longdelay = 10
@@ -25,22 +29,34 @@ class WebWhatsApp:
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing_for_trusted_sources_enabled": False,
-            "safebrowsing.enabled": False
+            "safebrowsing.enabled": False,
         }
 
-    def setupSelenium(self):
+    def setupSelenium(self, isFirstRun):
+        global driver
         path = self.driverPath
+        if isFirstRun is False:
+            self.chrome_option.add_argument("--headless")
+            dirs = setting.getDirs("WhatsMail", "jamestansx")
+            userData_json = os.path.join(dirs["userData"], "data.json")
+            data = jsonfile.read_json(userData_json)
+            user_agent = data["user_agent"]
+            self.chrome_option.add_argument("--user-agent={}".format(user_agent))
+        self.chrome_option.add_argument("--no-sandbox")
         self.chrome_option.add_argument("--disable-notifications")
+        self.chrome_option.add_argument("--disable-gpu")
         self.chrome_option.add_argument(f"user-data-dir={self.chromedataPath}")
         self.chrome_option.add_experimental_option("prefs", self.prefs)
-        # self.chrome_option.add_argument("--headless")
-        # Uncomment this after the program is done
-        # ============================================
-        # load the webdriver and website configuration
-        global driver
         driver = webdriver.Chrome(executable_path=path, options=self.chrome_option)
-        driver.implicitly_wait(15)
-
+        if isFirstRun is True:
+            user_agent = driver.execute_script("return navigator.userAgent;")
+            dirs = setting.getDirs("WhatsMail", "jamestansx")
+            userData_json = os.path.join(dirs["userData"], "data.json")
+            data = jsonfile.read_json(userData_json)
+            data["user_agent"] = user_agent
+            data["isFirstRun"] = False
+            jsonfile.updata_json(userData_json, data)
+        driver.implicitly_wait(10)
 
     def is_loaded():
         attempts = 0
@@ -61,14 +77,20 @@ class WebWhatsApp:
             driver.close()
             sys.exit(0)
 
-    def open_webdriver(self):
-        self.setupSelenium()
+    def open_webdriver(self, isFirstRun):
+        self.setupSelenium(isFirstRun)
         driver.get(self.URL)
+        if isFirstRun is True:
+            print("Scan QR Code, And then Enter")
+            input()
+            print("Logged In")
         return WebWhatsApp.is_loaded()
 
-def open_whatsapp(downloadPath, webdriverPath, chromedataPath):
+
+def open_whatsapp(downloadPath, webdriverPath, chromedataPath, isFirstRun):
     webwhatsapp = WebWhatsApp(webdriverPath, downloadPath, chromedataPath)
-    return webwhatsapp.open_webdriver()
+    return webwhatsapp.open_webdriver(isFirstRun)
+
 
 def close_webdriver():
     driver.close()
