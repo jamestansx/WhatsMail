@@ -81,6 +81,10 @@ def getDirs(appname, appauthor):
     logging.debug("directory(s) is created")
     return get_dirs.get_dirs()
 
+def getLogDir(appname, appauthor):
+    dir = AppDirs(appname, appauthor)
+    logdir = dir.user_log_dir
+    return logdir
 
 def remove_files(dirPath):
     for file in os.listdir(dirPath):

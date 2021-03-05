@@ -10,17 +10,16 @@ logger = None
 
 def loggerConfig():
     global userLog_path, logger
-    dirs = setting.getDirs(config.appname, config.appauthor)
-    userLog_path = os.path.join(dirs["userLog"], "log.log")
+    dirs = setting.getLogDir(config.appname, config.appauthor)
+    userLog_path = os.path.join(dirs, "log.log")
     logging.basicConfig(
-        filename=userLog_path,
         filemode="w",
         format="%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d %(message)s",
         encoding="utf-8",
-        level=logging.DEBUG,
+        level=logging.INFO,
         datefmt="%d-%b-%y %H:%M:%S",
+        filename=userLog_path,
     )
-    logger = logging.get_logger()
 
 
 def stopLogging():
