@@ -1,5 +1,4 @@
 import logging
-import log
 import time
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -59,7 +58,10 @@ def download(message, downloadPath):
 
 
 def download_Img(message, downloadPath):
-    image_container = message.find_element_by_xpath('.//div[contains(@role,"button")]')
+    try:
+        image_container = message.find_element_by_xpath('.//div[contains(@role,"button")]')
+    except Exception as e:
+        logging.warning(f"Image is not found (maybe it's a voice message) {e}")
     image_container.click()
     logging.debug("Image is clicked")
     try:

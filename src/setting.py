@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 
 import keyring
 import yagmail
@@ -84,9 +84,9 @@ def getDirs(appname, appauthor):
 def getLogDir(appname, appauthor):
     dir = AppDirs(appname, appauthor)
     logdir = dir.user_log_dir
+    os.makedirs(logdir, exist_ok=True)
     return logdir
 
 def remove_files(dirPath):
     for file in os.listdir(dirPath):
         os.remove(os.path.join(dirPath, file))
-    logging.info(f"all files in {dirPath} is deleted")

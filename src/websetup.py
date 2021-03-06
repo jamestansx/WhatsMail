@@ -1,6 +1,6 @@
-import sys
-import os
 import logging
+import os
+import sys
 
 from selenium import webdriver
 from selenium.common.exceptions import *
@@ -9,9 +9,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+import config
 import jsonfile
 import setting
-import config
 
 shortdelay = 5
 longdelay = 10

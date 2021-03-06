@@ -1,6 +1,6 @@
+import logging
 import sys
 import time
-import logging
 
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By

@@ -1,10 +1,12 @@
+import os
+
 import config
 import fetchMessages
+import log
 import openmessages
 import sendEmail
 import setting
 import websetup
-import log
 
 target_username, gmail, download_path, webdriverPath, userGmail, chromedataPath, isFirstRun = (
     "",
@@ -30,6 +32,7 @@ def main():
         message_list = fetchMessages.fetchMessages(download_path)
         sendEmail.sendGmail(userGmail, target_username, gmail, message_list, download_path)
     setting.remove_files(download_path)
+    os.remove(log.userLog_path)
 
 
 if __name__ == "__main__":

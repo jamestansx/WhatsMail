@@ -1,8 +1,11 @@
-import yagmail
-import os
 import logging
-import log
+import os
 from datetime import datetime
+
+import yagmail
+
+import log
+
 
 class Email:
     def __init__(self, userGmail, target_username, targetGmail, messageList, downloadPath):

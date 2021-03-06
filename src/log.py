@@ -13,7 +13,7 @@ def loggerConfig():
     dirs = setting.getLogDir(config.appname, config.appauthor)
     userLog_path = os.path.join(dirs, "log.log")
     logging.basicConfig(
-        filemode="w",
+        filemode="a",
         format="%(asctime)s %(levelname)s: %(funcName)s:%(lineno)d %(message)s",
         encoding="utf-8",
         level=logging.DEBUG,

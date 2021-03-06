@@ -1,7 +1,8 @@
-import os
 import logging
-import setting
+import os
+
 import jsonfile
+import setting
 
 appname = "WhatsMail"
 appauthor = "jamestansx"
@@ -31,7 +32,8 @@ def isConfig():
 
 
 def setupSetting(pathToFile):
-    download_path = input("Please enter the download path: ")
+    download_path = os.path.join(dirs["userCache"], "downloads")
+    os.makedirs(download_path, exist_ok=True)
     webdriverPath = input("Please enter the path to the Chrome webdriver: ")
     chromedataPath = getChomedataPath()
     pathDict = {
